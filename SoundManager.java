@@ -3,7 +3,6 @@ import java.io.File;
 
 public class SoundManager {
     
-    // We run the sound on a separate lightweight thread so it never freezes the game UI
     public static void play(String fileName) {
         new Thread(() -> {
             try {
@@ -18,8 +17,6 @@ public class SoundManager {
                 clip.open(audioIn);
                 clip.start();
                 
-                // Allow the thread to live long enough for the sound to finish playing
-                // (Assuming no sound effect is longer than 5 seconds)
                 Thread.sleep(5000); 
                 clip.close();
                 

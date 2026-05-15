@@ -14,7 +14,6 @@ public class GameEngine extends JFrame {
     private int humanBetThisPhase = 0;
     private int currentPhase = 0; 
 
-    // We must declare buttons here so we can disable them during AI turns
     private JButton btnCall;
     private JButton btnRaise;
     private JButton btnFold;
@@ -55,10 +54,8 @@ public class GameEngine extends JFrame {
 
         JButton btnTutorial = new JButton("Tutorial");
 
-        // --- NEW: Tutorial Button Logic ---
         btnTutorial.addActionListener(e -> {
             try {
-                // Assuming your image is named "tutorial.png" in the assets folder
                 ImageIcon icon = new ImageIcon("assets/tutorial.png");
                 Image scaled = icon.getImage().getScaledInstance(400, 300, Image.SCALE_SMOOTH);
                 JOptionPane.showMessageDialog(this, "", "Tutorial", JOptionPane.PLAIN_MESSAGE, new ImageIcon(scaled));
@@ -67,7 +64,6 @@ public class GameEngine extends JFrame {
             }
         });
 
-        // 1. CALL / CHECK
         btnCall.addActionListener(e -> {
             SoundManager.play("check.wav");
             int toCall = currentBet - humanBetThisPhase;
@@ -78,7 +74,6 @@ public class GameEngine extends JFrame {
             startAITurns(); 
         });
 
-        // 2. RAISE
         btnRaise.addActionListener(e -> {
             String input = JOptionPane.showInputDialog(this, 
                 "Current bet is $" + currentBet + ". Enter your raise:", 
@@ -105,20 +100,16 @@ public class GameEngine extends JFrame {
             }
         });
 
-        // 3. FOLD
         btnFold.addActionListener(e -> {
             SoundManager.play("fold.wav");
             players.get(0).fold();
             players.get(0).setActionText("Fold");
             
-            // If you folding means only 1 bot is left, they win instantly
             if (checkEarlyWin()) return;
             
-            // Fast forward the rest of the game instantly
             while (currentPhase < 4) {
                 runAIInstantly();
                 
-                // If bots fold out during the fast-forward, end it early!
                 if (checkEarlyWin()) return; 
                 
                 currentBet = 0;
@@ -216,7 +207,6 @@ private void startAITurns() {
         }).start();
     }
 
-    // A helper method for when you fold and just want the game to end instantly
     private void runAIInstantly() {
         Random r = new Random();
         for (Player p : players) {
@@ -316,7 +306,6 @@ private void startAITurns() {
             if (winner == players.get(0)) {
                 SoundManager.play("win.wav");
             } else if (!players.get(0).isFolded()) {
-                // If the human didn't fold, but an AI won
                 SoundManager.play("lose.wav"); 
             }
 
@@ -328,7 +317,6 @@ private void startAITurns() {
 
     }
 
-    // --- NEW: Checks if everyone but one person folded ---
     private boolean checkEarlyWin() {
         int activeCount = 0;
         Player winner = null;
@@ -340,7 +328,6 @@ private void startAITurns() {
             }
         }
 
-        // If 1 or 0 players are left, the round ends instantly!
         if (activeCount <= 1) {
             if (activeCount == 1) {
                 winner.adjustChips(pot);
@@ -351,16 +338,15 @@ private void startAITurns() {
                 JOptionPane.showMessageDialog(this, "Everyone folded! No winner.");
             }
             
-            // Unlock UI and deal a new hand
             btnCall.setEnabled(true);
             btnRaise.setEnabled(true);
             btnFold.setEnabled(true);
             startNewRound();
             
-            return true; // We tell the game an early win happened
+            return true;
         }
         
-        return false; // The game continues normally
+        return false;
     }
 
 

@@ -20,7 +20,6 @@ public class Player {
             chips -= amount;
             return amount;
         } else {
-            // If they don't have enough, they go All-In
             int allIn = chips;
             chips = 0;
             return allIn;

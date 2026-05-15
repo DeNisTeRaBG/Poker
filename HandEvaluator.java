@@ -65,8 +65,6 @@ public class HandEvaluator {
             return new HandResult("Four of a Kind " + getRankName(quads) + "s", 700000 + quads);
         }
 
-        // FULL HOUSE (Base 600,000)
-        // A full house is either Trips + Pair, OR Trips + a smaller Trips (which acts as a pair)
         if (!trips.isEmpty()) {
             if (trips.size() > 1) { // Two sets of 3. Highest is trips, second is pair.
                 return new HandResult("Full House " + getRankName(trips.get(0)) + "s over " + getRankName(trips.get(1)) + "s", 600000 + (trips.get(0) * 100) + trips.get(1));
@@ -75,38 +73,30 @@ public class HandEvaluator {
             }
         }
 
-        // FLUSH (Base 500,000)
         if (flushSuit != null) {
             return new HandResult("Flush (" + flushSuit + ")", 500000 + flushCards.get(0).getRank().getValue());
         }
 
-        // STRAIGHT (Base 400,000)
         if (straightHigh > 0) {
             return new HandResult("Straight (High " + getRankName(straightHigh) + ")", 400000 + straightHigh);
         }
 
-        // THREE OF A KIND (Base 300,000)
         if (!trips.isEmpty()) {
             return new HandResult("Three of a Kind " + getRankName(trips.get(0)) + "s", 300000 + trips.get(0));
         }
 
-        // TWO PAIR (Base 200,000)
         if (pairs.size() >= 2) {
-            // Formula guarantees Pair 10s & 2s beats Pair 9s & 8s
             return new HandResult("Two Pair " + getRankName(pairs.get(0)) + "s & " + getRankName(pairs.get(1)) + "s", 200000 + (pairs.get(0) * 100) + pairs.get(1));
         }
 
-        // ONE PAIR (Base 100,000)
         if (pairs.size() == 1) {
             return new HandResult("Pair of " + getRankName(pairs.get(0)) + "s", 100000 + pairs.get(0));
         }
 
-        // HIGH CARD (Base 0)
         int highCardVal = cards.get(0).getRank().getValue();
         return new HandResult("High Card " + getRankName(highCardVal), highCardVal);
     }
 
-    // --- HELPER METHOD: Finds the highest card of a 5-card straight ---
     private static int getStraightHighCard(List<Card> cardList) {
         List<Integer> uniqueRanks = new ArrayList<>();
         for (Card c : cardList) {
@@ -115,12 +105,10 @@ public class HandEvaluator {
             }
         }
         
-        // Special Rule: Ace (14) can act as a 1 for A-2-3-4-5 straights
         if (uniqueRanks.contains(14)) uniqueRanks.add(1);
 
         int consecutiveCount = 1;
         for (int i = 0; i < uniqueRanks.size() - 1; i++) {
-            // If the next card down is exactly 1 less than the current card
             if (uniqueRanks.get(i) - 1 == uniqueRanks.get(i + 1)) {
                 consecutiveCount++;
                 if (consecutiveCount == 5) return uniqueRanks.get(i - 3); // Found a straight! Return the top card.
@@ -131,7 +119,6 @@ public class HandEvaluator {
         return 0;
     }
 
-    // --- HELPER METHOD: Converts numbers back to pretty text (11 = "JACK") ---
     private static String getRankName(int val) {
         switch (val) {
             case 11: return "JACK";

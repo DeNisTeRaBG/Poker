@@ -26,7 +26,6 @@ public class PokerTablePanel extends JPanel {
 
         if (players == null) return;
 
-        // --- NEW: Calculate the center of the screen dynamically ---
         int centerX = getWidth() / 2;
         int centerY = getHeight() / 2;
 
@@ -34,7 +33,6 @@ public class PokerTablePanel extends JPanel {
             Player p = players.get(i);
             int x = 0, y = 0;
 
-            // Anchor players to the edges and center
             if (i == 0) { x = centerX - 40; y = getHeight() - 150; }     // Bottom (You)
             else if (i == 1) { x = 30; y = centerY - 56; }               // Left
             else if (i == 2) { x = centerX - 40; y = 30; }               // Top
@@ -63,7 +61,6 @@ public class PokerTablePanel extends JPanel {
         g.setFont(new Font("Arial", Font.BOLD, 22));
         g.drawString("POT: $" + currentPot, centerX - 40, centerY - 80); 
 
-        // Anchor hand strength to bottom right
         g.setColor(Color.CYAN);
         g.setFont(new Font("Arial", Font.BOLD, 16));
         g.drawString("Hand: " + handStrength, getWidth() - 250, getHeight() - 30); 
